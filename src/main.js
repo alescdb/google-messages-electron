@@ -3,8 +3,17 @@ const {Settings} = require('./settings');
 const path = require('path')
 const contextMenu = require('electron-context-menu');
 const player = require('play-sound')(opts = {});
+const {dialog} = require('electron');
 
 const settings = new Settings();
+const LANGUAGES = [
+  'AF', 'AM', 'AR', 'BG', 'BN', 'CA', 'CS', 'DA', 'DE', 'EL', 'ES',
+  'ET', 'FA', 'FI', 'FR', 'GU', 'HE', 'HI', 'HR', 'HU', 'ID', 'IT',
+  'JA', 'KN', 'KO', 'LT', 'LV', 'ML', 'MR', 'MS', 'NB', 'NL', 'PL',
+  'RO', 'RU', 'SK', 'SL', 'SR', 'SV', 'SW', 'TA', 'TE', 'TH', 'TR',
+  'UK', 'UR', 'VI',
+];
+
 const messages = {
   title: 'Google Messages',
   window: null,
@@ -12,9 +21,44 @@ const messages = {
   debug: false,
 }
 
+function setLang(lang) {
+  settings.lang = lang;
+}
+
 function setTray(win) {
   const tray = new Tray(nativeImage.createFromPath(path.join(app.getAppPath(), `resources/icons/32.png`)));
+  const lang = settings.lang;
 
+  const subMenu = [
+    {
+      label: 'Default',
+      type: 'checkbox',
+      checked: !lang || lang === '',
+      click: () => {
+        setLang(undefined);
+      }
+    }
+  ];
+  for (const language of LANGUAGES) {
+    subMenu.push({
+      label: language,
+      type: 'checkbox',
+      checked: lang === language,
+      click: () => {
+        setLang(language);
+        dialog.showMessageBox({
+          type: 'warning',
+          buttons: ['Not now', 'Restart'],
+          title: 'Restart',
+          message: 'You need to restart to apply new lang, exit now?',
+        }).then((r) => {
+          if(r.response === 1) {
+            process.exit();
+          }
+        });
+      }
+    });
+  }
   tray.setContextMenu(Menu.buildFromTemplate([
     {
       label: 'Show',
@@ -45,6 +89,11 @@ function setTray(win) {
       click: (e) => {
         settings.playSound = e.checked;
       }
+    },
+    {
+      label: 'Language',
+      type: 'submenu',
+      submenu: subMenu,
     },
     {
       type: 'separator'
@@ -89,10 +138,18 @@ function createWindow() {
     showCopyImageAddress: true,
   });
 
-  session.defaultSession.setSpellCheckerLanguages([
-    "fr-FR",
-    "en-US"
-  ]);
+  if (settings.lang) {
+    const ll = settings.lang.toLowerCase();
+    const lu = settings.lang.toUpperCase();
+    const iso = `${ll}-${lu}`;
+
+    console.log(`setSpellCheckerLanguages : [ ${iso}, ${ll}, en-US ]`);
+    session.defaultSession.setSpellCheckerLanguages([
+      iso,
+      ll,
+      "en-US"
+    ]);
+  }
 
   if (messages.debug) {
     window.webContents.openDevTools()
@@ -125,6 +182,8 @@ if (!app.requestSingleInstanceLock()) {
   console.error("already running !");
   app.quit();
 } else {
+  console.log(`Lang Setting : ${settings.lang}`);
+
   if (settings.lang) {
     app.commandLine.appendSwitch('lang', settings.lang);
   }

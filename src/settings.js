@@ -8,7 +8,7 @@ const SETTING_PLAY_SOUND = 'playsound';
 class Settings {
   _startHidden = false;
   _minimize = true;
-  _lang = 'FR';
+  _lang = undefined;
   _playSound = true;
 
   constructor() {
@@ -49,9 +49,13 @@ class Settings {
     return this._playSound;
   }
 
-
   get lang() {
     return this._lang;
+  }
+
+  set lang(value) {
+    this._lang = value;
+    settings.setSync(SETTING_LANG, value);
   }
 }
 
