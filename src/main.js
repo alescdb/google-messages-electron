@@ -83,7 +83,7 @@ function setTray(win) {
       }
     },
     {
-      label: 'PLay sound',
+      label: 'Play sound',
       type: 'checkbox',
       checked: settings.playSound,
       click: (e) => {

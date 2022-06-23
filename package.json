@@ -7,10 +7,10 @@
   "scripts": {
     "start": "electron .",
     "dist": "electron-packager . --platform=linux --arch=x64 --asar --overwrite --out=./dist/",
+    "linux:install": "linux/install.sh",
     "flatpak:build": "flatpak-builder build flatpak/com.github.alescdb.google-messages-electron.yml --install --force-clean --user",
     "flatpak:run": "flatpak run com.github.alescdb.google-messages-electron",
-    "flatpack-generator": "flatpak-node-generator -o flatpak/generated-sources.json npm package-lock.json",
-    "linux:install": "linux/install.sh"
+    "flatpak:generator": "flatpak-node-generator -o flatpak/generated-sources.json npm package-lock.json"
   },
   "dependencies": {
     "electron-context-menu": "^3.2.0",
