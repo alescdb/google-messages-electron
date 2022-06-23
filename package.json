@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron .",
     "dist": "electron-packager . --platform=linux --arch=x64 --asar --overwrite --out=./dist/",
+    "clean": "rm -rf build dist .flatpak-builder",
     "linux:install": "linux/install.sh",
     "flatpak:build": "flatpak-builder build flatpak/com.github.alescdb.google-messages-electron.yml --install --force-clean --user",
     "flatpak:run": "flatpak run com.github.alescdb.google-messages-electron",
