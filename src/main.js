@@ -23,6 +23,16 @@ const messages = {
 
 function setLang(lang) {
   settings.lang = lang;
+  dialog.showMessageBox({
+    type: 'warning',
+    buttons: ['Not now', 'Restart'],
+    title: 'Restart',
+    message: 'You need to restart to apply new lang, exit now?',
+  }).then((r) => {
+    if (r.response === 1) {
+      process.exit();
+    }
+  });
 }
 
 function setTray(win) {
@@ -46,16 +56,6 @@ function setTray(win) {
       checked: lang === language,
       click: () => {
         setLang(language);
-        dialog.showMessageBox({
-          type: 'warning',
-          buttons: ['Not now', 'Restart'],
-          title: 'Restart',
-          message: 'You need to restart to apply new lang, exit now?',
-        }).then((r) => {
-          if (r.response === 1) {
-            process.exit();
-          }
-        });
       }
     });
   }
