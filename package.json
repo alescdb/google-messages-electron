@@ -1,0 +1,25 @@
+{
+  "name": "google-messages-electron",
+  "version": "0.0.1",
+  "description": "Google Messages Electron",
+  "private": true,
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-packager . --platform=linux --arch=x64 --asar --overwrite --out=./dist/",
+    "flatpak:build": "flatpak-builder build flatpak/com.github.alescdb.google-messages-electron.yml --install --force-clean --user",
+    "flatpak:run": "flatpak run com.github.alescdb.google-messages-electron",
+    "flatpack-generator": "flatpak-node-generator -o flatpak/generated-sources.json npm package-lock.json",
+    "linux:install": "linux/install.sh"
+  },
+  "dependencies": {
+    "electron-context-menu": "^3.2.0",
+    "electron-settings": "^4.0.2",
+    "play-sound": "^1.1.5"
+  },
+  "devDependencies": {
+    "electron": "^19.0.4",
+    "electron-builder": "^23.0.0",
+    "electron-packager": "^15.5.1"
+  }
+}
