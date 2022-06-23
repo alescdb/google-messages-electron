@@ -7,7 +7,7 @@ const {dialog} = require('electron');
 
 const settings = new Settings();
 const LANGUAGES = [
-  'AF', 'AM', 'AR', 'BG', 'BN', 'CA', 'CS', 'DA', 'DE', 'EL', 'ES',
+  'AM', 'AR', 'BG', 'BN', 'CA', 'CS', 'DA', 'DE', 'EL', 'ES',
   'ET', 'FA', 'FI', 'FR', 'GU', 'HE', 'HI', 'HR', 'HU', 'ID', 'IT',
   'JA', 'KN', 'KO', 'LT', 'LV', 'ML', 'MR', 'MS', 'NB', 'NL', 'PL',
   'RO', 'RU', 'SK', 'SL', 'SR', 'SV', 'SW', 'TA', 'TE', 'TH', 'TR',
@@ -52,7 +52,7 @@ function setTray(win) {
           title: 'Restart',
           message: 'You need to restart to apply new lang, exit now?',
         }).then((r) => {
-          if(r.response === 1) {
+          if (r.response === 1) {
             process.exit();
           }
         });
@@ -144,11 +144,16 @@ function createWindow() {
     const iso = `${ll}-${lu}`;
 
     console.log(`setSpellCheckerLanguages : [ ${iso}, ${ll}, en-US ]`);
-    session.defaultSession.setSpellCheckerLanguages([
-      iso,
-      ll,
-      "en-US"
-    ]);
+    try {
+      session.defaultSession.setSpellCheckerLanguages([iso, ll, "en-US"]);
+    } catch (e) {
+      console.error(e);
+      try {
+        session.defaultSession.setSpellCheckerLanguages([ll, "en-US"]);
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }
 
   if (messages.debug) {
