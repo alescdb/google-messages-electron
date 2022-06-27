@@ -19,8 +19,8 @@
     "play-sound": "^1.1.5"
   },
   "devDependencies": {
-    "electron": "^19.0.4",
-    "electron-builder": "^23.0.0",
-    "electron-packager": "^15.5.1"
+    "electron": "^6.1.12",
+    "electron-builder": "^5.5.0",
+    "electron-packager": "^13.1.1"
   }
 }

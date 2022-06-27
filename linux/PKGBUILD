@@ -1,0 +1,42 @@
+# Maintainer: Atakku <atakkudev@gmail.com>
+pkgname=google-messages-electron
+pkgver=0.0.1
+pkgrel=1
+pkgdesc="Unofficial Google Messages for web"
+arch=('x86_64')
+url=https://github.com/alescdb/google-messages-electron
+license=('GPL3')
+provides=(google-messages-electron)
+conflicts=(google-messages-electron)
+
+depends=()
+makedepends=(git npm)
+source=("git+https://github.com/alescdb/google-messages-electron.git")
+sha512sums=('SKIP')
+
+prepare() {
+  echo "pkgname => $pkgname"
+  echo "pkgdir => $pkgdir"
+  echo "srcdir => $srcdir"
+
+  cd "$srcdir"/$pkgname
+  npm install
+}
+
+build() {
+  cd "$srcdir"/$pkgname
+  npm run dist
+}
+
+package() {
+  echo "pkgname => $pkgname"
+  echo "pkgdir => $pkgdir"
+  echo "srcdir => $srcdir"
+  _base=$(dirname $srcdir)
+  install -d "$pkgdir"/usr/{bin,share/{pixmaps,applications}}
+  install -d "$pkgdir"/usr/lib
+  install "$srcdir/$pkgname/icon.png"                "$pkgdir/usr/share/pixmaps/$pkgname.png"
+  install "$_base/$pkgname.desktop"                  "$pkgdir/usr/share/applications/$pkgname.desktop"
+  cp -r   "$srcdir/$pkgname/dist/$pkgname-linux-x64" "$pkgdir/usr/lib/$pkgname"
+  ln -sf  "../lib/$pkgname/$pkgname"              "$pkgdir/usr/bin/$pkgname"
+}
