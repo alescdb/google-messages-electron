@@ -6,6 +6,11 @@ const player = require('play-sound')(opts = {});
 const {dialog} = require('electron');
 
 const settings = new Settings();
+
+const icon_32 = path.join(app.getAppPath(), 'resources/icons/32.png');
+const icon_unread_32 = path.join(app.getAppPath(), 'resources/icons/unread/32.png');
+const icon_256 = path.join(app.getAppPath(), 'resources/icons/256.png');
+
 const LANGUAGES = [
   'AM', 'AR', 'BG', 'BN', 'CA', 'CS', 'DA', 'DE', 'EL', 'ES',
   'ET', 'FA', 'FI', 'FR', 'GU', 'HE', 'HI', 'HR', 'HU', 'ID', 'IT',
@@ -36,7 +41,7 @@ function setLang(lang) {
 }
 
 function setTray(win) {
-  const tray = new Tray(nativeImage.createFromPath(path.join(app.getAppPath(), `resources/icons/32.png`)));
+  const tray = new Tray(nativeImage.createFromPath(icon_32));
   const lang = settings.lang;
 
   const subMenu = [
@@ -124,7 +129,7 @@ function createWindow() {
       spellcheck: true,
     },
     show: false,
-    icon: nativeImage.createFromPath(path.join(app.getAppPath(), 'resources/icons/256.png')),
+    icon: nativeImage.createFromPath(icon_256),
     minHeight: 570,
     minWidth: 480,
     center: true,
@@ -179,8 +184,13 @@ function createWindow() {
     return true;
   });
 
+
+  console.log(`icon_32 : ${icon_32}`);
+  console.log(`icon_256 : ${icon_256}`);
+
   messages.window = window;
   messages.tray = setTray(window);
+  messages.tray.setImage(nativeImage.createFromPath(icon_32));
 }
 
 if (!app.requestSingleInstanceLock()) {
@@ -203,12 +213,8 @@ if (!app.requestSingleInstanceLock()) {
 
     ipcMain.on('unread', (event, count) => {
       console.log(`receive unread count : ${count}`);
-      const icon = nativeImage.createFromPath(
-        path.join(app.getAppPath(), count <= 0 ?
-          'resources/icons/32.png' :
-          'resources/icons/unread/32.png'
-        )
-      );
+      const icon = nativeImage.createFromPath(count <= 0 ? icon_32 : icon_unread_32);
+
       messages.tray.setImage(icon);
       if (settings.playSound && count > 0) {
         player.play(path.join(app.getAppPath(), 'resources/sound.mp3'), function (err) {
